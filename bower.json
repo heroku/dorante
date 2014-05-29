@@ -1,0 +1,24 @@
+{
+  "name": "dorante",
+  "main": "dist/dorante.js",
+  "version": "0.1.1",
+  "homepage": "https://github.com/jclem/dorante",
+  "authors": [
+    "Jonathan Clem <jonathan@jclem.net>"
+  ],
+  "description": "stub an API from a JSON schema",
+  "keywords": [
+    "api",
+    "json",
+    "schema",
+    "stub"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
