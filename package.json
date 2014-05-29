@@ -24,12 +24,13 @@
   "homepage": "https://github.com/jclem/dorante",
   "dependencies": {
     "bluebird": "^1.2.4",
-    "request": "^2.36.0"
+    "request": "^2.36.0",
+    "steeltoe": "^1.0.1"
   },
   "jshintConfig": {
     "globalstrict": true,
     "globals": {
-      "module" : false,
+      "module": false,
       "require": false
     }
   }
