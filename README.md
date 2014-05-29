@@ -1,6 +1,4 @@
-# [dorante][the-liar]
-
-[![Build Status](https://travis-ci.org/jclem/dorante.svg?branch=master)](https://travis-ci.org/jclem/dorante)
+# [dorante][the-liar] [![Build Status](https://travis-ci.org/jclem/dorante.svg?branch=master)](https://travis-ci.org/jclem/dorante)
 
 Dorante accepts a JSON schema and provides a stub API server based on it.
 
