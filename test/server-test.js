@@ -134,6 +134,21 @@ describe('dorante server', function() {
     });
   });
 
+  describe('an endpoint that does not exist', function() {
+    var response;
+
+    beforeEach(function(done) {
+      get('http://localhost:' + dorantePort + '/foo-bar-baz').spread(function(res) {
+        response = res;
+        done();
+      });
+    });
+
+    it('returns a 404', function() {
+      response.statusCode.should.eql(404);
+    });
+  });
+
   describe('#stub', function() {
     var body, response, path;
 

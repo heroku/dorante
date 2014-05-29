@@ -202,15 +202,24 @@ Dorante.prototype.getPropertiesFromPath = function doranteGetPropertiesFromPath(
 Dorante.prototype.handleRequest = function doranteHandleRequest(req, res) {
   var pathname   = url.parse(req.url).pathname;
   var definition = this.getDefinition(pathname);
-  var link       = this.getLink(req.method, pathname, definition);
-  var stub       = this.stubs[stubKey(req.method.toUpperCase(), pathname)];
+
+  if (!definition) {
+    return notFound();
+  }
+
+  var link = this.getLink(req.method, pathname, definition);
+  var stub = this.stubs[stubKey(req.method.toUpperCase(), pathname)];
 
   if (!link && !stub) {
-    end({ error: 'Not found' }, 404);
+    notFound();
   } else if (stub) {
     end(stub.body, stub.statusCode || getStatusCode(req));
   } else {
     end.apply(null, this.buildResponse(pathname, definition, link));
+  }
+
+  function notFound() {
+    end({ error: 'Not found' }, 404);
   }
 
   function end(body, statusCode) {
