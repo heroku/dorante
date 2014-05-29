@@ -30,6 +30,23 @@ get('https://api.example.com/schema', function(err, response, body) {
 });
 ```
 
+Certain endpoints for the API can also be stubbed:
+
+```javascript
+var appResponse = dorante.factory('app', { name: 'foo-bar'});
+dorante.stub('GET', '/apps', [appResponse], 200);
+```
+
+And unstubbed:
+
+```javascript
+dorante.unstub('GET', '/apps');
+
+// or...
+
+dorante.unstubAll();
+```
+
 ### Factories
 
 Dorante can build factories from your JSON schema:

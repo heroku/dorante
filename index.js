@@ -19,10 +19,12 @@ var url      = require('url');
  */
 function Dorante(schema) {
   this.schema = schema;
+  this.stubs  = {};
 }
 
 /**
- * Build a response form a given path, definition, and link.
+ * Build a response form a given path, definition, and link. If a stub is
+ * provided for that path, the stub will be used.
  *
  * @method buildResponse
  * @private
@@ -33,7 +35,9 @@ function Dorante(schema) {
 Dorante.prototype.buildResponse = function doranteBuildResponse(pathname, definition, link) {
   var pathProperties = this.getPropertiesFromPath(pathname, link.href);
   var properties     = this.getPropertiesFromDefinition(pathProperties, definition);
-  return properties;
+  var statusCode     = getStatusCode(link);
+
+  return [properties, statusCode];
 };
 
 /**
@@ -199,11 +203,14 @@ Dorante.prototype.handleRequest = function doranteHandleRequest(req, res) {
   var pathname   = url.parse(req.url).pathname;
   var definition = this.getDefinition(pathname);
   var link       = this.getLink(req.method, pathname, definition);
+  var stub       = this.stubs[stubKey(req.method.toUpperCase(), pathname)];
 
-  if (!link) {
+  if (!link && !stub) {
     end({ error: 'Not found' }, 404);
+  } else if (stub) {
+    end(stub.body, stub.statusCode || getStatusCode(req));
   } else {
-    end(this.buildResponse(pathname, definition, link));
+    end.apply(null, this.buildResponse(pathname, definition, link));
   }
 
   function end(body, statusCode) {
@@ -279,10 +286,65 @@ function arrayFind(array, fn) {
   return null;
 }
 
+/**
+ * Force the Dorante server to return a specific response body and code from
+ * then desired endpoint.
+ *
+ * @method stub
+ * @param {String} method the HTTP method to stub against
+ * @param {String} pathname the path to stub
+ * @param {Object} responseBody the stub response body
+ * @param {Number} statusCode the status code to return in the stubbed response
+ * @example
+ *     dorante.stub('/account', { name: 'foo' });
+ */
+Dorante.prototype.stub = function doranteStub(method, pathname, responseBody, statusCode) {
+  this.stubs[stubKey(method, pathname)] = {
+    body      : responseBody,
+    statusCode: statusCode
+  };
+};
+
+/**
+ * Unstub a specific stub
+ *
+ * @method unstub
+ * @param {String} method the HTTP method to unstub for
+ * @param {String} pathname the path to unstub
+ * @example
+ *     dorante.unstub('GET', '/account');
+ */
+Dorante.prototype.unstub = function doranteUnstub(method, pathname) {
+  var key = stubKey(method, pathname);
+  delete this.stubs[key];
+};
+
+/**
+ * Unstub all stubs
+ *
+ * @method unstubAll
+ * @example
+ *     dorante.unstubAll();
+ */
+Dorante.prototype.unstubAll = function doranteUnstubAll() {
+  this.stubs = {};
+};
+
 function getRef(schema, ref) {
   ref = ref.slice(2);
   ref = ref.replace(/\//g, '.');
   return steeltoe(schema).get(ref);
+}
+
+function getStatusCode(link) {
+  switch (link.method.toUpperCase()) {
+    case 'POST':
+      return 201;
+    case 'DELETE':
+      return 204;
+    default:
+      return 200;
+  }
 }
 
 function recursiveExtend(target, source) {
@@ -303,6 +365,10 @@ function recursiveExtend(target, source) {
       }
     }
   }
+}
+
+function stubKey(method, pathname) {
+  return method.toUpperCase() + ': ' + pathname;
 }
 
 module.exports = Dorante;
