@@ -145,4 +145,18 @@ describe('dorante factories', function() {
       });
     });
   });
+
+  describe('#defineFactory', function() {
+    beforeEach(function() {
+      dorante.defineFactory('attachment', {
+        foo: 'bar'
+      });
+    });
+
+    it('defines a custom factory', function() {
+      dorante.factory('attachment').should.eql({
+        foo: 'bar'
+      });
+    });
+  });
 });

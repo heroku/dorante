@@ -19,7 +19,8 @@ var url      = require('url');
  */
 function Dorante(schema) {
   this.schema = schema;
-  this.stubs  = {};
+  this.stubs = {};
+  this.customFactories = {};
 }
 
 /**
@@ -41,6 +42,19 @@ Dorante.prototype.buildResponse = function doranteBuildResponse(pathname, defini
 };
 
 /**
+ * Define a custom factory.
+ *
+ * @method defineFactory
+ * @param {String} name the name of the new factory
+ * @param {Object} body the default factory body
+ * @example
+ *     dorante.defineFactory('foo', { foo: 'bar' });
+ */
+Dorante.prototype.defineFactory = function doranteDefineFactory(name, body) {
+  this.customFactories[name] = body;
+};
+
+/**
  * Fetch a factory object for a given definition.
  *
  * @method factory
@@ -50,12 +64,16 @@ Dorante.prototype.buildResponse = function doranteBuildResponse(pathname, defini
  *     dorante.factory('app');
  */
 Dorante.prototype.factory = function doranteFactory(definitionName, customProperties) {
-  var definition = this.schema.definitions[definitionName];
-  var properties = this.getPropertiesFromDefinition({}, definition);
+  if (this.customFactories[definitionName]) {
+    return this.customFactories[definitionName];
+  } else {
+    var definition = this.schema.definitions[definitionName];
+    var properties = this.getPropertiesFromDefinition({}, definition);
 
-  recursiveExtend(properties, customProperties);
+    recursiveExtend(properties, customProperties);
 
-  return properties;
+    return properties;
+  }
 };
 
 /**
