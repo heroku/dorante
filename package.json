@@ -21,5 +21,16 @@
   "bugs": {
     "url": "https://github.com/jclem/dorante/issues"
   },
-  "homepage": "https://github.com/jclem/dorante"
+  "homepage": "https://github.com/jclem/dorante",
+  "dependencies": {
+    "bluebird": "^1.2.4",
+    "request": "^2.36.0"
+  },
+  "jshintConfig": {
+    "globalstrict": true,
+    "globals": {
+      "module" : false,
+      "require": false
+    }
+  }
 }
