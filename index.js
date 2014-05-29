@@ -2,10 +2,8 @@
 
 var Promise  = require('bluebird');
 var http     = require('http');
-var request  = require('request');
 var steeltoe = require('steeltoe');
 var url      = require('url');
-var get      = Promise.promisify(request.get);
 
 /**
  * Dorante accepts a JSON schema and stubs an API server based on that schema.
@@ -49,7 +47,7 @@ Dorante.prototype.buildResponse = function doranteBuildResponse(pathname, defini
  *     this.getDefinition('/apps/my-app');
  */
 Dorante.prototype.getDefinition = function doranteGetDefinition(path) {
-  var definition, linkPaths, matchingPath, paths;
+  var definition, linkPaths, matchingPath;
 
   var pathsMatch = function pathsMatch(linkPath) {
     return this.pathsMatch(path, linkPath);

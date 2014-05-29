@@ -32,9 +32,11 @@
     "should": "^4.0.0"
   },
   "jshintConfig": {
+    "unused"      : true,
     "globalstrict": true,
     "globals": {
       "__dirname" : false,
+      "after"     : false,
       "before"    : false,
       "beforeEach": false,
       "describe"  : false,
