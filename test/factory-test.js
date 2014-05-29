@@ -81,6 +81,22 @@ describe('dorante factories', function() {
     });
   });
 
+  describe('for a factory with an array property', function() {
+    it('returns an array property in its results', function() {
+      dorante.factory('build-result').should.eql({
+        build    : {
+          id    : '01234567-89ab-cdef-0123-456789abcdef',
+          status: 'succeeded'
+        },
+        exit_code: 0,
+        lines    : [{
+          stream: 'STDOUT',
+          line  : '-----> Ruby app detected\n'
+        }]
+      });
+    });
+  });
+
   describe('for a factory with nested properties', function() {
     var app;
 

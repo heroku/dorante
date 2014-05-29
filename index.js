@@ -1,7 +1,7 @@
 'use strict';
 
 var Promise  = require('bluebird');
-var merge    = require('object-merge');
+var _        = require('lodash');
 var http     = require('http');
 var steeltoe = require('steeltoe');
 var url      = require('url');
@@ -65,8 +65,6 @@ Dorante.prototype.defineFactory = function doranteDefineFactory(name, body) {
  *     dorante.factory('app');
  */
 Dorante.prototype.factory = function doranteFactory(definitionName, customProperties) {
-  customProperties = customProperties || {};
-
   var definition = this.schema.definitions[definitionName];
   var properties;
 
@@ -76,7 +74,7 @@ Dorante.prototype.factory = function doranteFactory(definitionName, customProper
     properties = this.getPropertiesFromDefinition({}, definition);
   }
 
-  properties = merge(properties, customProperties);
+  properties = merge(properties, customProperties || {});
 
   return properties;
 };
@@ -164,7 +162,7 @@ Dorante.prototype.getLink = function doranteGetLink(method, pathname, definition
  */
 Dorante.prototype.getPropertiesFromDefinition = function doranteGetPropertiesFromDefinition(givenProperties, definition) {
   var result = {};
-  var property, propertyDefinition;
+  var example, property, propertyDefinition;
 
   for (var key in definition.properties) {
     property = definition.properties[key];
@@ -174,8 +172,15 @@ Dorante.prototype.getPropertiesFromDefinition = function doranteGetPropertiesFro
     } else if (givenProperties[property.$ref]) {
       result[key] = givenProperties[property.$ref];
     } else {
-      propertyDefinition = getRef(this.schema, property.$ref);
-      result[key] = propertyDefinition.example;
+      if (property.type && property.type[0] === 'array') {
+        propertyDefinition = getRef(this.schema, property.items.$ref);
+        example            = [propertyDefinition.example];
+      } else {
+        propertyDefinition = getRef(this.schema, property.$ref);
+        example            = propertyDefinition.example;
+      }
+
+      result[key] = example;
     }
   }
 
@@ -377,6 +382,13 @@ function getStatusCode(link) {
     default:
       return 200;
   }
+}
+
+function merge(target, source) {
+  target = _.cloneDeep(target);
+  source = _.cloneDeep(source);
+
+  return _.merge(target, source);
 }
 
 function stubKey(method, pathname) {
