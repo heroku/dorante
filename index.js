@@ -1,6 +1,7 @@
 'use strict';
 
 var Promise  = require('bluebird');
+var merge    = require('object-merge');
 var http     = require('http');
 var steeltoe = require('steeltoe');
 var url      = require('url');
@@ -64,16 +65,20 @@ Dorante.prototype.defineFactory = function doranteDefineFactory(name, body) {
  *     dorante.factory('app');
  */
 Dorante.prototype.factory = function doranteFactory(definitionName, customProperties) {
+  customProperties = customProperties || {};
+
+  var definition = this.schema.definitions[definitionName];
+  var properties;
+
   if (this.customFactories[definitionName]) {
-    return this.customFactories[definitionName];
+    properties = this.customFactories[definitionName];
   } else {
-    var definition = this.schema.definitions[definitionName];
-    var properties = this.getPropertiesFromDefinition({}, definition);
-
-    recursiveExtend(properties, customProperties);
-
-    return properties;
+    properties = this.getPropertiesFromDefinition({}, definition);
   }
+
+  properties = merge(properties, customProperties);
+
+  return properties;
 };
 
 /**
@@ -371,26 +376,6 @@ function getStatusCode(link) {
       return 204;
     default:
       return 200;
-  }
-}
-
-function recursiveExtend(target, source) {
-  var item;
-
-  for (var key in source) {
-    if (source.hasOwnProperty(key)) {
-      item = source[key];
-
-      if (typeof item === 'object') {
-        if (!target.hasOwnProperty(key)) {
-          target[key] = {};
-        }
-
-        recursiveExtend(target[key], item);
-      } else {
-        target[key] = item;
-      }
-    }
   }
 }
 

@@ -24,6 +24,7 @@
   "homepage": "https://github.com/jclem/dorante",
   "dependencies": {
     "bluebird": "^1.2.4",
+    "object-merge": "^2.5.1",
     "request": "^2.36.0",
     "steeltoe": "^1.0.1"
   },
@@ -32,17 +33,17 @@
     "should": "^4.0.0"
   },
   "jshintConfig": {
-    "unused"      : true,
+    "unused": true,
     "globalstrict": true,
     "globals": {
-      "__dirname" : false,
-      "after"     : false,
-      "before"    : false,
+      "__dirname": false,
+      "after": false,
+      "before": false,
       "beforeEach": false,
-      "describe"  : false,
-      "it"        : false,
-      "module"    : false,
-      "require"   : false
+      "describe": false,
+      "it": false,
+      "module": false,
+      "require": false
     }
   }
 }

@@ -62,6 +62,23 @@ describe('dorante factories', function() {
         dorante.factory('account', { email: 'custom-user@example.com' }).should.eql(account);
       });
     });
+
+    it('does not modify factories', function() {
+      dorante.factory('account', { foo: 'baz' });
+
+      dorante.factory('account', { baz: 'qux' }).should.eql({
+        allow_tracking: true,
+        beta          : false,
+        created_at    : '2012-01-01T12:00:00Z',
+        email         : 'username@example.com',
+        id            : '01234567-89ab-cdef-0123-456789abcdef',
+        last_login    : '2012-01-01T12:00:00Z',
+        name          : 'Tina Edmonds',
+        updated_at    : '2012-01-01T12:00:00Z',
+        verified      : false,
+        baz           : 'qux'
+      });
+    });
   });
 
   describe('for a factory with nested properties', function() {
@@ -156,6 +173,21 @@ describe('dorante factories', function() {
     it('defines a custom factory', function() {
       dorante.factory('attachment').should.eql({
         foo: 'bar'
+      });
+    });
+
+    it('can extend custom factories', function() {
+      dorante.factory('attachment', { foo: 'baz' }).should.eql({
+        foo: 'baz'
+      });
+    });
+
+    it('does not modify custom factories', function() {
+      dorante.factory('attachment', { foo: 'baz' });
+
+      dorante.factory('attachment', { baz: 'qux' }).should.eql({
+        foo: 'bar',
+        baz: 'qux'
       });
     });
   });
