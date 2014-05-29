@@ -1,6 +1,6 @@
 {
   "name": "dorante",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "stub an API from a JSON schema",
   "main": "index.js",
   "scripts": {
