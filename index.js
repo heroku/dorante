@@ -37,6 +37,24 @@ Dorante.prototype.buildResponse = function doranteBuildResponse(pathname, defini
 };
 
 /**
+ * Fetch a factory object for a given definition.
+ *
+ * @method factory
+ * @param {String} definitionName the name of the definition to fetch a factory for
+ * @return {Object} a factory object for the requested definition
+ * @example
+ *     dorante.factory('app');
+ */
+Dorante.prototype.factory = function doranteFactory(definitionName, customProperties) {
+  var definition = this.schema.definitions[definitionName];
+  var properties = this.getPropertiesFromDefinition({}, definition);
+
+  recursiveExtend(properties, customProperties);
+
+  return properties;
+};
+
+/**
  * Get the schema definition for a given path.
  *
  * @method getDefinition
@@ -265,6 +283,26 @@ function getRef(schema, ref) {
   ref = ref.slice(2);
   ref = ref.replace(/\//g, '.');
   return steeltoe(schema).get(ref);
+}
+
+function recursiveExtend(target, source) {
+  var item;
+
+  for (var key in source) {
+    if (source.hasOwnProperty(key)) {
+      item = source[key];
+
+      if (typeof item === 'object') {
+        if (!target.hasOwnProperty(key)) {
+          target[key] = {};
+        }
+
+        recursiveExtend(target[key], item);
+      } else {
+        target[key] = item;
+      }
+    }
+  }
 }
 
 module.exports = Dorante;
