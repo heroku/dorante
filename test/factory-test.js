@@ -61,6 +61,42 @@ describe('dorante factories', function() {
       it('returns the requested factory with custom properties', function() {
         dorante.factory('account', { email: 'custom-user@example.com' }).should.eql(account);
       });
+
+      describe('validating the factories', function() {
+        describe('when the validateProperties option is true', function() {
+          beforeEach(function() {
+            dorante.options.validateProperties = true;
+          });
+
+          it('should throw when the custom properties are invalid', function() {
+            (function() {
+              dorante.factory('account-feature', { description: 1 });
+            }).should.throw(/InvalidFactory/);
+
+            (function() {
+              dorante.factory('account', { allow_tracking: 1 });
+            }).should.throw(/InvalidFactory/);
+          });
+
+          it('should validate against enums', function() {
+            (function() {
+              dorante.factory('app-setup', { status: 'notrealstatus' });
+            }).should.throw(/InvalidFactory/);
+          });
+        });
+
+        describe('when the validateProperties option is false', function() {
+          beforeEach(function() {
+            dorante.options.validateProperties = false;
+          });
+
+          it('does not throw for invalid properties', function() {
+            (function() {
+              dorante.factory('account-feature', { description: 1 });
+            }).should.not.throw(/InvalidFactory/);
+          });
+        });
+      });
     });
 
     it('does not modify factories', function() {

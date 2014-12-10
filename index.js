@@ -5,6 +5,7 @@ var _        = require('lodash');
 var http     = require('http');
 var steeltoe = require('steeltoe');
 var url      = require('url');
+var tv4      = require('tv4');
 
 /**
  * Dorante accepts a JSON schema and stubs an API server based on that schema.
@@ -18,10 +19,11 @@ var url      = require('url');
  *       // Server started...
  *     });
  */
-function Dorante(schema) {
+function Dorante(schema, options) {
   this.schema = schema;
   this.stubs = {};
   this.customFactories = {};
+  this.options = options || {};
 }
 
 /**
@@ -76,7 +78,29 @@ Dorante.prototype.factory = function doranteFactory(definitionName, customProper
 
   properties = merge(properties, customProperties || {});
 
+  if(this.options.validateProperties) this.validateProperties(definitionName, properties);
+
   return properties;
+};
+
+/**
+ * Validate properties against the schema definition
+ *
+ * @method validateProperties
+ * @param {String} definitionName the name of the definition to fetch a factory for
+ * @param {Object} properties the properites to validate against the schema definition
+ * @example
+ *     dorante.validateProperties('user', { email: 'jack@testing.com' }
+ */
+Dorante.prototype.validateProperties = function validateProperties(definitionName, customProperties) {
+  var objToValidate = {};
+  objToValidate[definitionName] = customProperties;
+
+  var result = tv4.validateResult(objToValidate, this.schema);
+
+  if(!result.valid) {
+    throw new Error('InvalidFactory:' + result.error.message + ' for ' + result.error.dataPath);
+  }
 };
 
 /**

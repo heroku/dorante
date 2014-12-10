@@ -26,7 +26,8 @@
     "bluebird": "^1.2.4",
     "lodash": "^2.4.1",
     "request": "^2.36.0",
-    "steeltoe": "^1.0.1"
+    "steeltoe": "^1.0.1",
+    "tv4": "^1.1.5"
   },
   "devDependencies": {
     "mocha": "^1.20.0",
