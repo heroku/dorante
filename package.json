@@ -4,7 +4,8 @@
   "description": "stub an API from a JSON schema",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/**/*-test.js"
+    "test": "mocha test/**/*-test.js",
+    "build": "browserify index.js -o dist/dorante.js -s Dorante"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
     "steeltoe": "^1.0.1"
   },
   "devDependencies": {
+    "browserify": "^7.0.1",
     "mocha": "^1.20.0",
     "should": "^4.0.0"
   },
